@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export HF_HUB_CACHE="/path/to/.cache/huggingface/hub"
+
 MODEL_PATH="/path/to/varco-llm-ko-6.4b-FM"
 
 lm_eval --model hf \
