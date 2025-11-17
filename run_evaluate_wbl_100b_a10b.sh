@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export HF_HUB_CACHE="/path/to/.cache/huggingface/hub"
+
 MODEL_PATH="/path/to/WBL-100B-A10B-HF"
 
 lm_eval --model hf \
