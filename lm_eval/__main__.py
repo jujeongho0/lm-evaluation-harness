@@ -7,6 +7,8 @@ from functools import partial
 from pathlib import Path
 from typing import Union
 
+os.environ["HF_ALLOW_CODE_EVAL"] = "1"
+
 
 def try_parse_json(value: str) -> Union[str, dict, None]:
     if value is None:
