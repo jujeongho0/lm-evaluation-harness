@@ -2,6 +2,7 @@
 
 # pip install tiktoken
 # pip install flash-linear-attention
+# pip install blobfile
 
 export HF_HUB_CACHE="/path/to/.cache/huggingface/hub"
 
