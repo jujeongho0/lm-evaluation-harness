@@ -28,6 +28,7 @@ lm_eval --model hf \
     --trust_remote_code \
     --output_path results \
 
+# huggingface-cli login
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
     --tasks gpqa_main_n_shot \
