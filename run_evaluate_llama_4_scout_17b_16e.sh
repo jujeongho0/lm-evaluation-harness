@@ -7,7 +7,6 @@ MODEL_PATH="meta-llama/Llama-4-Scout-17B-16E"
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=eager,parallelize=True \
     --tasks leaderboard_mmlu_pro,leaderboard_bbh,leaderboard_gpqa,leaderboard_math_hard,leaderboard_musr \
-    --num_fewshot 5 \
     --batch_size auto:4 \
     --output_path results \
 
