@@ -6,14 +6,14 @@ MODEL_PATH="Qwen/Qwen3-235B-A22B"
 
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
-    --tasks mmlu \
+    --tasks leaderboard_mmlu_pro,leaderboard_bbh,leaderboard_gpqa,leaderboard_math_hard,leaderboard_musr \
     --num_fewshot 5 \
     --batch_size auto:4 \
     --output_path results \
 
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
-    --tasks kmmlu \
+    --tasks kmmlu_redux \
     --num_fewshot 5 \
     --batch_size auto:4 \
     --output_path results \
@@ -22,14 +22,6 @@ lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
     --tasks kobest \
     --num_fewshot 10 \
-    --batch_size auto:4 \
-    --output_path results \
-
-# huggingface-cli login
-lm_eval --model hf \
-    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
-    --tasks gpqa_main_n_shot \
-    --num_fewshot 5 \
     --batch_size auto:4 \
     --output_path results \
 
