@@ -1,0 +1,13 @@
+task: kmmlu_redux
+dataset_path: LGAI-EXAONE/KMMLU-Redux
+output_type: multiple_choice
+test_split: test
+doc_to_text: "{{question.strip()}}\nA. {{options[0]}}\nB. {{options[1]}}\nC. {{options[2]}}\nD. {{options[3]}}\n정답："
+doc_to_choice: ["A", "B", "C", "D"]
+doc_to_target: "{{(solution | int)-1}}"
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 2.0
