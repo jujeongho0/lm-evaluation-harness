@@ -7,7 +7,6 @@ MODEL_PATH="Qwen/Qwen3-30B-A3B"
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
     --tasks leaderboard_mmlu_pro,leaderboard_bbh,leaderboard_gpqa,leaderboard_math_hard,leaderboard_musr \
-    --num_fewshot 5 \
     --batch_size auto:4 \
     --output_path results \
 
