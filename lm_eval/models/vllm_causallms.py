@@ -679,7 +679,7 @@ class VLLM(TemplateLM):
 
             # cache generations
             for output, context in zip(cont, context):
-                generated_text: str = output.outputs[0].text
+                generated_text: str = output.outputs[0].text.strip()
                 # use secondary stop seqs to cut off should-have-been-stopped content post-hoc
                 generated_text = postprocess_generated_text(
                     generated_text, until, self.think_end_token
@@ -830,7 +830,7 @@ class VLLM(TemplateLM):
             )
             kwargs["temperature"] = 0.0
         # hf defaults
-        kwargs["skip_special_tokens"] = kwargs.get("skip_special_tokens", False)
+        kwargs["skip_special_tokens"] = kwargs.get("skip_special_tokens", True)
         kwargs["spaces_between_special_tokens"] = kwargs.get(
             "spaces_between_special_tokens", False
         )
