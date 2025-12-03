@@ -674,7 +674,7 @@ class VLLM(TemplateLM):
 
             # cache generations
             for output, context in zip(cont, context):
-                generated_text: str = output.outputs[0].text.strip()
+                generated_text: str = output.outputs[0].text.lstrip()
                 # use secondary stop seqs to cut off should-have-been-stopped content post-hoc
                 generated_text = postprocess_generated_text(
                     generated_text, until, self.think_end_token
