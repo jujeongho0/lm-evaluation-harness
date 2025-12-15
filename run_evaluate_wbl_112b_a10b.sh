@@ -2,7 +2,7 @@
 
 export HF_HUB_CACHE="/path/to/.cache/huggingface/hub"
 
-MODEL_PATH="/path/to/WBL-100B-A10B-HF"
+MODEL_PATH="/path/to/WBL-112B-A10B-HF"
 
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
@@ -28,7 +28,6 @@ lm_eval --model hf \
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
     --tasks kmmlu_redux \
-    --num_fewshot 5 \
     --batch_size auto \
     --trust_remote_code \
     --output_path results \
@@ -51,7 +50,6 @@ lm_eval --model hf \
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
     --tasks mbpp \
-    --num_fewshot 3 \
     --batch_size auto \
     --output_path results \
     --trust_remote_code \
@@ -62,4 +60,12 @@ lm_eval --model hf \
     --tasks leaderboard_musr \
     --batch_size auto \
     --trust_remote_code \
+    --output_path results \
+
+lm_eval --model hf \
+    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True,max_length=32768 \
+    --tasks ruler \
+    --batch_size auto \
+    --trust_remote_code \
+    --metadata '{"max_seq_lengths":[4096,8192,16384,32768]}' \
     --output_path results \
