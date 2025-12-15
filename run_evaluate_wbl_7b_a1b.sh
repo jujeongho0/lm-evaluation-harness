@@ -28,7 +28,6 @@ lm_eval --model hf \
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2 \
     --tasks kmmlu_redux \
-    --num_fewshot 5 \
     --batch_size auto \
     --trust_remote_code \
     --output_path results \
@@ -51,7 +50,6 @@ lm_eval --model hf \
 lm_eval --model hf \
     --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2 \
     --tasks mbpp \
-    --num_fewshot 3 \
     --batch_size auto \
     --output_path results \
     --trust_remote_code \
