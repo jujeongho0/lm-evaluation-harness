@@ -1534,8 +1534,7 @@ class HFLM(TemplateLM):
             )
             
             # FIXME
-            thinking = ""
-            chat_templated = chat_templated + f"{thinking}\n</think>\n\n"
+            chat_templated = chat_templated + "\n</think>\n\n"
 
         except jinja2.exceptions.TemplateError:
             eval_logger.warning(
