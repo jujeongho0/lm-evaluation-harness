@@ -23,8 +23,11 @@ def process_results(doc: dict, results: List[str]) -> Dict[str, int]:
     else:
         answer = results[0][indices[0] + 1 : indices[-1]]
 
-    if is_equiv(remove_boxed(last_boxed_only_string(answer)), remove_boxed(last_boxed_only_string(doc["solution"]))): # FIXME
-        retval = 1
+    try:
+        if is_equiv(remove_boxed(last_boxed_only_string(answer)), remove_boxed(last_boxed_only_string(doc["solution"]))): # FIXME
+            retval = 1
+    except:
+        pass
 
     results = {
         "exact_match": retval,
