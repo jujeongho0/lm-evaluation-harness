@@ -1485,6 +1485,18 @@ class HFLM(TemplateLM):
 
                 s = self.tok_decode(cont_toks)
 
+                # FIXME
+                def clean_blocks(text, separators=("\n\n", "\t\t")):
+                    def strip_one(s):
+                        return s[1:] if s.startswith(" ") else s
+
+                    for sep in separators:
+                        text = sep.join(strip_one(block) for block in text.split(sep))
+
+                    return text
+
+                s = clean_blocks(s)
+
                 # Strip leading whitespace if we removed thinking tokens
                 if isinstance(self.think_end_token, int):
                     s = s.lstrip()
@@ -1520,6 +1532,11 @@ class HFLM(TemplateLM):
                 continue_final_message=not add_generation_prompt,
                 **self.chat_template_args,
             )
+            
+            # FIXME
+            thinking = "OK."
+            chat_templated = chat_templated + f"{thinking}\n</think>\n\n"
+
         except jinja2.exceptions.TemplateError:
             eval_logger.warning(
                 "Failed to apply chat template. removing the system role in chat history."
