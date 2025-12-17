@@ -319,9 +319,8 @@ class VLLM(TemplateLM):
                 **self.chat_template_args,
             )
 
-            # FIXME
-            thinking = ""
-            chat_templated = chat_templated + f"{thinking}\n</think>\n\n"
+            # FIXME: Non-thinking
+            # chat_templated = chat_templated + "\n</think>\n\n"
             
         except jinja2.exceptions.TemplateError:
             eval_logger.warning(
