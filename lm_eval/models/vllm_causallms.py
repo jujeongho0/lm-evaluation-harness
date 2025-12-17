@@ -318,6 +318,11 @@ class VLLM(TemplateLM):
                 enable_thinking=self.enable_thinking,
                 **self.chat_template_args,
             )
+
+            # FIXME
+            thinking = "OK."
+            chat_templated = chat_templated + f"{thinking}\n</think>\n\n"
+            
         except jinja2.exceptions.TemplateError:
             eval_logger.warning(
                 "Failed to apply chat template. removing the system role in chat history."
@@ -674,7 +679,20 @@ class VLLM(TemplateLM):
 
             # cache generations
             for output, context in zip(cont, context):
-                generated_text: str = output.outputs[0].text.lstrip()
+                generated_text: str = output.outputs[0].text
+
+                # FIXME
+                def clean_blocks(text, separators=("\n\n", "\t\t")):
+                    def strip_one(s):
+                        return s[1:] if s.startswith(" ") else s
+
+                    for sep in separators:
+                        text = sep.join(strip_one(block) for block in text.split(sep))
+
+                    return text
+                
+                generated_text = clean_blocks(generated_text)
+
                 # use secondary stop seqs to cut off should-have-been-stopped content post-hoc
                 generated_text = postprocess_generated_text(
                     generated_text, until, self.think_end_token
@@ -825,7 +843,7 @@ class VLLM(TemplateLM):
             )
             kwargs["temperature"] = 0.0
         # hf defaults
-        kwargs["skip_special_tokens"] = kwargs.get("skip_special_tokens", True)
+        kwargs["skip_special_tokens"] = kwargs.get("skip_special_tokens", False)
         kwargs["spaces_between_special_tokens"] = kwargs.get(
             "spaces_between_special_tokens", False
         )
