@@ -9,7 +9,7 @@ lm_eval --model hf \
     --tasks leaderboard_mmlu_pro \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --gen_kwargs max_gen_toks=8192 \
     --output_path results \
 
 lm_eval --model hf \
@@ -17,7 +17,7 @@ lm_eval --model hf \
     --tasks leaderboard_bbh \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --gen_kwargs max_gen_toks=8192 \
     --output_path results \
 
 lm_eval --model hf \
@@ -25,7 +25,7 @@ lm_eval --model hf \
     --tasks leaderboard_gpqa \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --gen_kwargs max_gen_toks=8192 \
     --output_path results \
 
 lm_eval --model hf \
@@ -33,7 +33,7 @@ lm_eval --model hf \
     --tasks kmmlu_redux \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --gen_kwargs max_gen_toks=8192 \
     --output_path results \
 
 lm_eval --model hf \
