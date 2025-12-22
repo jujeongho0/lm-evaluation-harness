@@ -1,0 +1,13 @@
+task: kobalt
+dataset_path: snunlp/KoBALT-700
+output_type: multiple_choice
+test_split: raw
+doc_to_text: "당신은 문제를 해결하는 전문가입니다.\n\n다음 문제에 대해서 충분히 생각하고 추론하여, 10개의 보기(A, B, C, D, E, F, G, H, I, J) 중 정답을 고르세요.\n\n{{Question}}\n정답:"
+doc_to_choice: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+doc_to_target: "{{['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'].index(Answer)}}"
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0
