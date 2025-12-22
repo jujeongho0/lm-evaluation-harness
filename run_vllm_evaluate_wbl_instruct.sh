@@ -10,15 +10,26 @@ lm_eval --model vllm \
     --tasks click \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192
+    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --apply_chat_template \
     --output_path results \
 
+lm_eval --model vllm \
+    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --tasks kobalt \
+    --batch_size auto \
+    --trust_remote_code \
+    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --apply_chat_template \
+    --output_path results \
+    
 lm_eval --model vllm \
     --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
     --tasks hrm8k \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192
+    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --apply_chat_template \
     --output_path results \
 
 lm_eval --model vllm \
@@ -26,7 +37,8 @@ lm_eval --model vllm \
     --tasks ifbench \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192
+    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --apply_chat_template \
     --output_path results \
 
 lm_eval --model vllm \
@@ -34,5 +46,6 @@ lm_eval --model vllm \
     --tasks ifeval \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192
+    --gen_kwargs spaces_between_special_tokens=True,max_gen_toks=8192 \
+    --apply_chat_template \
     --output_path results \
