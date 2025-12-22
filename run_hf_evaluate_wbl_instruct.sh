@@ -10,6 +10,16 @@ lm_eval --model hf \
     --batch_size auto \
     --trust_remote_code \
     --gen_kwargs max_gen_toks=8192 \
+    --apply_chat_template \
+    --output_path results \
+
+lm_eval --model hf \
+    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
+    --tasks kobalt \
+    --batch_size auto \
+    --trust_remote_code \
+    --gen_kwargs max_gen_toks=8192 \
+    --apply_chat_template \
     --output_path results \
 
 lm_eval --model hf \
@@ -18,6 +28,7 @@ lm_eval --model hf \
     --batch_size auto \
     --trust_remote_code \
     --gen_kwargs max_gen_toks=8192 \
+    --apply_chat_template \
     --output_path results \
 
 lm_eval --model hf \
@@ -26,6 +37,7 @@ lm_eval --model hf \
     --batch_size auto \
     --trust_remote_code \
     --gen_kwargs max_gen_toks=8192 \
+    --apply_chat_template \
     --output_path results \
 
 lm_eval --model hf \
@@ -34,4 +46,5 @@ lm_eval --model hf \
     --batch_size auto \
     --trust_remote_code \
     --gen_kwargs max_gen_toks=8192 \
+    --apply_chat_template \
     --output_path results \
