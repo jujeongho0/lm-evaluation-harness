@@ -735,7 +735,7 @@ class VLLM(TemplateLM):
                 generated_text: str = output.outputs[0].text
 
                 # TODO: WBL models need post-processing of results
-                def clean_blocks(text, separators=("\n")):
+                def clean_blocks(text):
                     return text
                 
                 generated_text = clean_blocks(generated_text)
