@@ -734,24 +734,8 @@ class VLLM(TemplateLM):
             for output, context in zip(cont, context):
                 generated_text: str = output.outputs[0].text
 
-                # FIXME
-                # def clean_blocks(text, separators=("\n\n", "\t\t")):
-                #     def strip_one(s):
-                #         return s[1:] if s.startswith(" ") else s
-
-                #     for sep in separators:
-                #         text = sep.join(strip_one(block) for block in text.split(sep))
-
-                #     return text
+                # TODO: WBL models need post-processing of results
                 def clean_blocks(text, separators=("\n")):
-                    def strip_one(s):
-                        return s[1:] if s.startswith(" ") else s
-
-                    for sep in separators:
-                        text = sep.join(strip_one(block) for block in text.split(sep))
-                    
-                    text = text.replace("▁", " ")
-
                     return text
                 
                 generated_text = clean_blocks(generated_text)
