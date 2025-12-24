@@ -321,9 +321,6 @@ class VLLM(TemplateLM):
                 **self.chat_template_args,
             )
 
-            # FIXME: Non-thinking
-            # chat_templated = chat_templated + "\n</think>\n\n"
-
         except jinja2.exceptions.TemplateError:
             eval_logger.warning(
                 "Failed to apply chat template. removing the system role in chat history."
