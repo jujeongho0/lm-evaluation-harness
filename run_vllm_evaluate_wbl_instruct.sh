@@ -6,7 +6,7 @@ export HF_HUB_CACHE="/path/to/.cache/huggingface/hub"
 MODEL_PATH="/path/to/wbl_model"
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8,thinking_budget=2048,think_end_token="</think>" \
     --tasks click \
     --batch_size auto \
     --trust_remote_code \
@@ -15,7 +15,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8,thinking_budget=2048,think_end_token="</think>" \
     --tasks kobalt \
     --batch_size auto \
     --trust_remote_code \
@@ -24,7 +24,7 @@ lm_eval --model vllm \
     --output_path results \
     
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8,thinking_budget=2048,think_end_token="</think>" \
     --tasks hrm8k \
     --batch_size auto \
     --trust_remote_code \
@@ -33,7 +33,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8,thinking_budget=2048,think_end_token="</think>" \
     --tasks ifbench \
     --batch_size auto \
     --trust_remote_code \
@@ -42,7 +42,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8,thinking_budget=2048,think_end_token="</think>" \
     --tasks ifeval \
     --batch_size auto \
     --trust_remote_code \
