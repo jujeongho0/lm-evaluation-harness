@@ -9,7 +9,6 @@ lm_eval --model hf \
     --tasks click \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs max_gen_toks=8192 \
     --apply_chat_template \
     --output_path results \
 
@@ -18,12 +17,11 @@ lm_eval --model hf \
     --tasks kobalt \
     --batch_size auto \
     --trust_remote_code \
-    --gen_kwargs max_gen_toks=8192 \
     --apply_chat_template \
     --output_path results \
 
 lm_eval --model hf \
-    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
+    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True,thinking_budget=2048,think_end_token="</think>" \
     --tasks hrm8k \
     --batch_size auto \
     --trust_remote_code \
@@ -32,7 +30,7 @@ lm_eval --model hf \
     --output_path results \
 
 lm_eval --model hf \
-    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
+    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True,thinking_budget=2048,think_end_token="</think>" \
     --tasks ifbench \
     --batch_size auto \
     --trust_remote_code \
@@ -41,7 +39,7 @@ lm_eval --model hf \
     --output_path results \
 
 lm_eval --model hf \
-    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True \
+    --model_args pretrained=${MODEL_PATH},attn_implementation=flash_attention_2,parallelize=True,thinking_budget=2048,think_end_token="</think>" \
     --tasks ifeval \
     --batch_size auto \
     --trust_remote_code \
