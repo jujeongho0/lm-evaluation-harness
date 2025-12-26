@@ -554,7 +554,7 @@ class VLLM(TemplateLM):
                             early_stopping_text = "\n\nConsidering the limited time by the user, I have to give the solution based on the thinking directly now.\n</think>\n\n"
                             temp_outputs.append(fo.outputs[0].text + early_stopping_text)
                             second_requests.append(fo.prompt_token_ids + fo.outputs[0].token_ids + self.tokenizer.encode(early_stopping_text))
-                            sampling_param.max_tokens = max_tokens - self.thinking_budget - 30
+                            sampling_param.max_tokens = max_tokens - self.thinking_budget
                             second_sampling_params.append(sampling_param)
 
                 second_outputs = self.model.generate(
@@ -734,7 +734,7 @@ class VLLM(TemplateLM):
             for output, context in zip(cont, context):
                 generated_text: str = output.outputs[0].text
 
-                # TODO: WBL models need post-processing of results
+                # FIXME: WBL models need post-processing of results
                 def clean_blocks(text):
                     return text
                 
