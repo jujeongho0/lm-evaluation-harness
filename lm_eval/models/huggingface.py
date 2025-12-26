@@ -103,6 +103,7 @@ class HFLM(TemplateLM):
         # end token for thinking, either the string or int token id.
         # splits to get response after this token (if provided).
         think_end_token: str | int | None = None,
+        thinking_budget: Optional[int] = None, # FIXME
         enable_thinking: bool | None = None,
         chat_template_args: dict[str, Any] | None = None,
         **kwargs,
@@ -243,6 +244,7 @@ class HFLM(TemplateLM):
             self.model.eval()
             self.model.tie_weights()
 
+        self.thinking_budget = thinking_budget # FIXME
         self.think_end_token = (
             int(think_end_token)
             if (isinstance(think_end_token, str) and think_end_token.isdigit())
@@ -1459,21 +1461,77 @@ class HFLM(TemplateLM):
             if "max_length" not in kwargs:
                 kwargs["max_length"] = context_enc.shape[1] + max_gen_toks
 
-            # perform batched generation
-            cont = self._model_generate(
-                context=context_enc,
-                attention_mask=attn_masks,
-                stop=until,
-                **kwargs,
-            )
+            # FIXME: Thinking Budget
+            if isinstance(self.thinking_budget, int):
+                max_length = kwargs["max_length"]
+                assert max_length > self.thinking_budget
 
-            cont_toks_list = cont.tolist()
-            for cont_toks, context in zip(cont_toks_list, contexts):
-                # discard context + left-padding toks if using causal decoder-only LM
+                kwargs["max_length"] = self.thinking_budget
+
+                first_cont = self._model_generate(
+                    context=context_enc,
+                    attention_mask=attn_masks,
+                    stop=until,
+                    **kwargs,
+                ).tolist()
+
+                cont, temp_cont, second_contexts = [], [], []
+                for fc in first_cont:                    
+                    if fc[-1] == self.eot_token_id:
+                        cont.append(fc)
+                    
+                    else:
+                        cont.append(None)
+
+                        s = self.tok_decode(fc)
+
+                        if "</think>" in s:
+                            temp_cont.append(fc)
+                            second_contexts.append(s)
+                        
+                        else:
+                            early_stopping_text = "\n\nConsidering the limited time by the user, I have to give the solution based on the thinking directly now.\n</think>\n\n"
+                            temp_cont.append(fc + self.tokenizer.encode(early_stopping_text))
+                            second_contexts.append(s + early_stopping_text)
+
+                second_context_enc, second_attn_masks = self.tok_batch_encode(
+                    second_contexts,
+                    left_truncate_len=max_ctx_len,
+                    truncation=self.truncation,
+                )
+                second_context_enc = second_context_enc.to(self.device)
+                second_attn_masks = second_attn_masks.to(self.device)
+
+                kwargs["max_length"] = max_length - self.thinking_budget
+
+                second_cont = self._model_generate(
+                    context=second_context_enc,
+                    attention_mask=second_attn_masks,
+                    stop=until,
+                    **kwargs,
+                ).tolist()
+
+                idx = 0
+                for i, c in enumerate(cont):
+                    if c is None:
+                        if self.backend == "causal":
+                            second_cont[idx] = second_cont[idx][second_context_enc.shape[1] :]
+                        second_cont[idx] = temp_cont[idx] + second_cont[idx]
+                        cont[i] = second_cont[idx]
+                        idx += 1
+            
+            else:
+                cont = self._model_generate(
+                    context=context_enc,
+                    attention_mask=attn_masks,
+                    stop=until,
+                    **kwargs,
+                ).tolist()
+
+            for cont_toks, context in zip(cont, contexts):
                 if self.backend == "causal":
                     cont_toks = cont_toks[context_enc.shape[1] :]
 
-                # Handle integer think_end_token: find last occurrence and strip tokens after it
                 if isinstance(self.think_end_token, int):
                     think_token_indices = [
                         i
@@ -1485,23 +1543,15 @@ class HFLM(TemplateLM):
 
                 s = self.tok_decode(cont_toks)
 
-                # FIXME
-                def clean_blocks(text, separators=("\n\n", "\t\t")):
-                    def strip_one(s):
-                        return s[1:] if s.startswith(" ") else s
-
-                    for sep in separators:
-                        text = sep.join(strip_one(block) for block in text.split(sep))
-
+                # FIXME: WBL models need post-processing of results
+                def clean_blocks(text):
                     return text
-
+                
                 s = clean_blocks(s)
 
-                # Strip leading whitespace if we removed thinking tokens
                 if isinstance(self.think_end_token, int):
                     s = s.lstrip()
 
-                # Apply post-processing: remove stop sequences and string-based thinking tokens
                 s = postprocess_generated_text(
                     generation=s,
                     stop=until,
@@ -1513,6 +1563,7 @@ class HFLM(TemplateLM):
 
                 self.cache_hook.add_partial("generate_until", (context, gen_kwargs), s)
                 pbar.update(1)
+
         # reorder this group of results back to original unsorted form
         res = re_ords.get_original(res)
 
@@ -1532,9 +1583,6 @@ class HFLM(TemplateLM):
                 continue_final_message=not add_generation_prompt,
                 **self.chat_template_args,
             )
-            
-            # FIXME: Non-thinking
-            # chat_templated = chat_templated + "\n</think>\n\n"
 
         except jinja2.exceptions.TemplateError:
             eval_logger.warning(
