@@ -141,7 +141,6 @@ class VLLM(TemplateLM):
         chat_template_args: Optional[dict] = None,
         # End marker for thinking tags - splits to get response after this token (if provided).
         think_end_token: Optional[str] = None,
-        thinking_budget: Optional[int] = None, # FIXME
         max_lora_rank: int = 16,
         **kwargs,
     ):
@@ -517,67 +516,12 @@ class VLLM(TemplateLM):
                         if proc.is_alive():
                             proc.kill()
         else:
-            # FIXME: Thinking Budget
-            if isinstance(self.thinking_budget, int):
-                for sampling_param in sampling_params:
-                    sampling_param.include_stop_str_in_output = True
-
-                max_tokens = sampling_params[0].max_tokens
-                assert max_tokens > self.thinking_budget
-
-                for sampling_param in sampling_params:
-                    sampling_param.max_tokens = self.thinking_budget
-
-                first_outputs = self.model.generate(
-                    [TokensPrompt(prompt_token_ids=request) for request in requests],
-                    sampling_params=sampling_params,
-                    use_tqdm=True if self.batch_size == "auto" else False,
-                    lora_request=self.lora_request,
-                )
-
-                outputs, temp_outputs, second_requests, second_sampling_params = [], [], [], []
-                for sampling_param, fo in zip(sampling_params, first_outputs):
-                    if "<|END|>" in fo.outputs[0].text:
-                        fo.outputs[0].text.replace("<|END|>", "")
-                        outputs.append(fo)
-
-                    else:
-                        outputs.append(None)
-
-                        if "</think>" in fo.outputs[0].text:
-                            temp_outputs.append(fo.outputs[0].text)
-                            second_requests.append(fo.prompt_token_ids + fo.outputs[0].token_ids)
-                            sampling_param.max_tokens = max_tokens - self.thinking_budget
-                            second_sampling_params.append(sampling_param)
-                            
-                        else:
-                            early_stopping_text = "\n\nConsidering the limited time by the user, I have to give the solution based on the thinking directly now.\n</think>\n\n"
-                            temp_outputs.append(fo.outputs[0].text + early_stopping_text)
-                            second_requests.append(fo.prompt_token_ids + fo.outputs[0].token_ids + self.tokenizer.encode(early_stopping_text))
-                            sampling_param.max_tokens = max_tokens - self.thinking_budget
-                            second_sampling_params.append(sampling_param)
-
-                second_outputs = self.model.generate(
-                    [TokensPrompt(prompt_token_ids=sr) for sr in second_requests],
-                    sampling_params=second_sampling_params,
-                    use_tqdm=True if self.batch_size == "auto" else False,
-                    lora_request=self.lora_request,
-                )
-
-                idx = 0
-                for i, o in enumerate(outputs):
-                    if o is None:
-                        second_outputs[idx].outputs[0].text = temp_outputs[idx] + second_outputs[idx].outputs[0].text.replace("<|END|>", "")
-                        outputs[i] = second_outputs[idx]
-                        idx += 1
-
-            else:
-                outputs = self.model.generate(
-                    [TokensPrompt(prompt_token_ids=request) for request in requests],
-                    sampling_params=sampling_params,
-                    use_tqdm=True if self.batch_size == "auto" else False,
-                    lora_request=self.lora_request,
-                )
+            outputs = self.model.generate(
+                [TokensPrompt(prompt_token_ids=request) for request in requests],
+                sampling_params=sampling_params,
+                use_tqdm=True if self.batch_size == "auto" else False,
+                lora_request=self.lora_request,
+            )
 
             return outputs
 
