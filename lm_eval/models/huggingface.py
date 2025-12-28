@@ -103,7 +103,6 @@ class HFLM(TemplateLM):
         # end token for thinking, either the string or int token id.
         # splits to get response after this token (if provided).
         think_end_token: str | int | None = None,
-        thinking_budget: Optional[int] = None, # FIXME
         enable_thinking: bool | None = None,
         chat_template_args: dict[str, Any] | None = None,
         **kwargs,
@@ -244,7 +243,6 @@ class HFLM(TemplateLM):
             self.model.eval()
             self.model.tie_weights()
 
-        self.thinking_budget = thinking_budget # FIXME
         self.think_end_token = (
             int(think_end_token)
             if (isinstance(think_end_token, str) and think_end_token.isdigit())
@@ -1461,72 +1459,12 @@ class HFLM(TemplateLM):
             if "max_length" not in kwargs:
                 kwargs["max_length"] = context_enc.shape[1] + max_gen_toks
 
-            # FIXME: Thinking Budget
-            if isinstance(self.thinking_budget, int):
-                max_length = kwargs["max_length"]
-                assert max_length > self.thinking_budget
-
-                kwargs["max_length"] = self.thinking_budget
-
-                first_cont = self._model_generate(
-                    context=context_enc,
-                    attention_mask=attn_masks,
-                    stop=until,
-                    **kwargs,
-                ).tolist()
-
-                cont, temp_cont, second_contexts = [], [], []
-                for fc in first_cont:                    
-                    if fc[-1] == self.eot_token_id:
-                        cont.append(fc)
-                    
-                    else:
-                        cont.append(None)
-
-                        s = self.tok_decode(fc)
-
-                        if "</think>" in s:
-                            temp_cont.append(fc)
-                            second_contexts.append(s)
-                        
-                        else:
-                            early_stopping_text = "\n\nConsidering the limited time by the user, I have to give the solution based on the thinking directly now.\n</think>\n\n"
-                            temp_cont.append(fc + self.tokenizer.encode(early_stopping_text))
-                            second_contexts.append(s + early_stopping_text)
-
-                second_context_enc, second_attn_masks = self.tok_batch_encode(
-                    second_contexts,
-                    left_truncate_len=max_ctx_len,
-                    truncation=self.truncation,
-                )
-                second_context_enc = second_context_enc.to(self.device)
-                second_attn_masks = second_attn_masks.to(self.device)
-
-                kwargs["max_length"] = max_length - self.thinking_budget
-
-                second_cont = self._model_generate(
-                    context=second_context_enc,
-                    attention_mask=second_attn_masks,
-                    stop=until,
-                    **kwargs,
-                ).tolist()
-
-                idx = 0
-                for i, c in enumerate(cont):
-                    if c is None:
-                        if self.backend == "causal":
-                            second_cont[idx] = second_cont[idx][second_context_enc.shape[1] :]
-                        second_cont[idx] = temp_cont[idx] + second_cont[idx]
-                        cont[i] = second_cont[idx]
-                        idx += 1
-            
-            else:
-                cont = self._model_generate(
-                    context=context_enc,
-                    attention_mask=attn_masks,
-                    stop=until,
-                    **kwargs,
-                ).tolist()
+            cont = self._model_generate(
+                context=context_enc,
+                attention_mask=attn_masks,
+                stop=until,
+                **kwargs,
+            ).tolist()
 
             for cont_toks, context in zip(cont, contexts):
                 if self.backend == "causal":
