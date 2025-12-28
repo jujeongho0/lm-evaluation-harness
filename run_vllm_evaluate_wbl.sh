@@ -6,7 +6,7 @@ export HF_HUB_CACHE="/path/to/.cache/huggingface/hub"
 MODEL_PATH="/path/to/wbl_model"
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True \
     --tasks leaderboard_mmlu_pro \
     --batch_size auto \
     --trust_remote_code \
@@ -14,7 +14,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True \
     --tasks leaderboard_bbh \
     --batch_size auto \
     --trust_remote_code \
@@ -22,7 +22,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True \
     --tasks leaderboard_gpqa \
     --batch_size auto \
     --trust_remote_code \
@@ -30,7 +30,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True \
     --tasks kmmlu_redux \
     --batch_size auto \
     --trust_remote_code \
@@ -38,7 +38,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True \
     --tasks kobest \
     --num_fewshot 10 \
     --batch_size auto \
@@ -47,7 +47,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True \
     --tasks leaderboard_math_hard \
     --batch_size auto \
     --trust_remote_code \
@@ -55,7 +55,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True \
     --tasks mbpp \
     --batch_size auto \
     --trust_remote_code \
@@ -64,7 +64,7 @@ lm_eval --model vllm \
     --confirm_run_unsafe_code \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True \
     --tasks leaderboard_musr \
     --batch_size auto \
     --trust_remote_code \
@@ -72,7 +72,7 @@ lm_eval --model vllm \
     --output_path results \
 
 lm_eval --model vllm \
-    --model_args pretrained=${MODEL_PATH},pipeline_parallel_size=8,max_length=32768 \
+    --model_args pretrained=${MODEL_PATH},tensor_parallel_size=8,enforce_eager=True,max_length=32768 \
     --tasks ruler \
     --batch_size auto \
     --trust_remote_code \
