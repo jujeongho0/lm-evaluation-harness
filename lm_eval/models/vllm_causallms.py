@@ -156,7 +156,6 @@ class VLLM(TemplateLM):
             "Either max_length or max_model_len may be provided, but not both"
         )
         kwargs.pop("device", None)
-        self.thinking_budget = thinking_budget
         self.think_end_token = think_end_token
         self.V1 = os.environ.get("VLLM_USE_V1", "1") != "0"
         self._max_length = max_model_len if max_model_len is not None else max_length
