@@ -677,7 +677,7 @@ class VLLM(TemplateLM):
             for output, context in zip(cont, context):
                 generated_text: str = output.outputs[0].text
 
-                # FIXME: WBL models need post-processing of results
+                # FIXME: VAETKI needs post-processing of results
                 def clean_blocks(text):
                     return text
                 
