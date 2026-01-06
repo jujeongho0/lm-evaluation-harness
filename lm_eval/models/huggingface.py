@@ -1481,7 +1481,7 @@ class HFLM(TemplateLM):
 
                 s = self.tok_decode(cont_toks)
 
-                # FIXME: WBL models need post-processing of results
+                # FIXME: VAETKI needs post-processing of results
                 def clean_blocks(text):
                     return text
                 
